@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Print the contents of the current directory in list format.
-#   Only displays the part of the name after the first dash. 
+#   Only displays the part of the name after the first dash.
 
 files=$(ls)
 for i in $files; do
