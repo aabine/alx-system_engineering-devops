@@ -6,5 +6,5 @@ while [ $index -lt 10 ]; do
 		echo "Hi"
 	fi
 	echo "Best School"
-	((count++))
+	((index++))
 done
