@@ -2,7 +2,7 @@
 
 # Let's use while loop to print "Best School" to the console
 index=0
-while [$index -lt 10]
+while [ $index -lt 10 ]
 do
  echo "Best School"
  ((index++))

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# print to the console "Best School" using while and if
+index=0
+while [ $index -lt 10 ]
+do 
+ if [ $index -eq 9 ]
+ then
+	echo "Hi"
+ fi
+ echo "Best School"
+ (( count++ ))
+done

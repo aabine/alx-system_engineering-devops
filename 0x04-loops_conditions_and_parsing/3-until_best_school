@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# lets use until to print "Best School" to the console
+index=0
+until [ $index -eq 10 ]
+do
+ echo "Best School"
+ (( index++ ))
+done
