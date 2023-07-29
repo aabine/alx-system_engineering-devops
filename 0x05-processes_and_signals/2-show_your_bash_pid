@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Display the PID of the Bash process
+
+# Use ps and grep to find the line containing the word "bash" in the process list
+# The '$$' represents the PID of the current Bash process running this script
+ps -aux | grep bash
