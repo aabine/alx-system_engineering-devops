@@ -6,9 +6,9 @@
 
 index=0
 while [ $index -lt 10 ]; do
-    if [ $index -eq 4 ]; then
+    if [ $index -eq 3 ]; then
         echo "bad luck"
-    elif [ $index -eq 8 ]; then
+    elif [ $index -eq 7 ]; then
         echo "good luck"
     else
         echo "Best School"
