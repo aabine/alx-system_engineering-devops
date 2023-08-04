@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# This script displays listening ports on the local machine
+# netstat - stand for (network statistics) it is used to display all open ports, 
+# The -l option displays listening ports and -p displays the PID
+netstat -l -p
