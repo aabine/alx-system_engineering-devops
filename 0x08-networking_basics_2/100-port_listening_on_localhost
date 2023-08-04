@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# listen on port 98 on localhost for connections
+
+# Check if nc (netcat) is available
+if ! command -v nc &>/dev/null; then
+  echo "Error: netcat (nc) command not found. Please install netcat first."
+  exit 1
+fi
+
+# Start listening on port 98
+nc -l localhost 98
