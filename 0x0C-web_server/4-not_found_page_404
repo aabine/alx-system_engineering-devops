@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# Update package list
+sudo apt-get update
+
+# Install nginx
+sudo apt-get install -y nginx 
+
+# Create index.html file
+echo "Hello World!" > /var/www/html/index.html
+
+# Create 404.html file
+echo "Ceci n'est pas une page" > /var/www/html/404.html
+
+# Create nginx configuration file
+sudo tee /etc/nginx/sites-available/default > /dev/null <<EOF
+server {
+   listen 80 default_server;
+   listen [::]:80 default_server;
+   
+   root /var/www/html;
+   index index.html;
+   
+   location /redirect_me {
+      return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+   }
+   
+   error_page 404 /404.html;
+   
+   location = /404.html {
+      internal;
+   }
+}
+EOF
+
+# Restart nginx service
+sudo service nginx restart
