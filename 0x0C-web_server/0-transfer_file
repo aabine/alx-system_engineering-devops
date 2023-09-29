@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Check if all 4 parameters are provided
 if [ $# -ne 4 ];

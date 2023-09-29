@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
-# Installs, configures, and starts the server
+
+# Update the package manager and install Nginx
 apt-get update
 apt-get -y install nginx
+
+# Allow HTTP traffic through the firewall
 sudo ufw allow 'Nginx HTTP'
+
+# Create a directory for the website files and set the permissions
 mkdir -p /var/www/html/
 sudo chmod -R 755 /var/www
-echo 'Hello World!' > /var/www/html/index.html
-SERVER_CONFIG=\
-"server {
+
+# Create the server configuration
+SERVER_CONFIG=$(cat <<EOF
+server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
 	root /var/www/html;
@@ -16,13 +22,17 @@ SERVER_CONFIG=\
 	location / {
 		try_files \$uri \$uri/ =404;
 	}
-	if (\$request_filename ~ redirect_me){
+	location /redirect_me {
 		rewrite ^ https://sketchfab.com/bluepeno/models permanent;
 	}
-}"
+}
+EOF
+)
 
+# Write the server configuration to the default Nginx configuration file
 bash -c "echo -e '$SERVER_CONFIG' > /etc/nginx/sites-enabled/default"
 
+# Check if Nginx is running and start or restart the server accordingly
 if [ "$(pgrep -c nginx)" -le 0 ]; then
 	service nginx start
 else
