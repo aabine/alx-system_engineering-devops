@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# Install software-properties-common to add the HAProxy PPA
+apt-get install -y software-properties-common
+
+# Add the HAProxy PPA and update the package list
+add-apt-repository -y ppa:vbernat/haproxy
+apt-get -y update
+
+# Install HAProxy version 1.8
+apt-get install haproxy -y
+
+# Enable HAProxy by creating the /etc/default/haproxy file
+echo "ENABLED=1" > /etc/default/haproxy
+
+# Configure HAProxy to listen on port 80 and load balance between web-01 and web-02
+cat <<EOF >> /etc/haproxy/haproxy.cfg
+listen load_balancer
+    bind *:80
+    mode http
+    balance roundrobin
+    option httpclose
+    option forwardfor
+    server 360246-web-01 100.25.111.179:80 check
+    server 360246-web-02 100.26.11.173:80 check
+EOF
+
+# Start the HAProxy service
+service haproxy start
