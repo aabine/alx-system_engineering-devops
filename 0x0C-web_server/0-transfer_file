@@ -1,22 +1,24 @@
 #!/usr/bin/env bash
 
 # Check if all 4 parameters are provided
-if [ $# -ne 4 ];
+if [ $# -lt 4 ];
 then
     echo "Usage: $0 PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
     exit 1
 fi
 
+PATH_TO_FILE=$1
+IP=$2
+USERNAME=$3
+PATH_TO_SSH_KEY=$4
+
 # Copy the file to the remote server using SCP
-# Disable strict host key checking to avoid prompting for confirmation
-# Use the provided SSH key for authentication
-# Copy the file specified by the first parameter
-# To the remote server's home directory
-scp -o StrictHostKeyChecking=no -i "$4" "$1" "$3@$2":~/
+scp -o "StrictHostKeyChecking=no" -i "$PATH_TO_SSH_KEY" "$PATH_TO_FILE" "$USERNAME"@"$IP":~/"
 
 # Check if the file transfer was successful
-if [ $? -ne 0 ];
+if [ $? -eq 0 ];
 then
-    echo "File transfer failed"
-    exit 1
+    echo "File transfer successful to $USERNAME@$IP"
+else
+    echo "File transfer failed to $USERNAME@$IP"
 fi
