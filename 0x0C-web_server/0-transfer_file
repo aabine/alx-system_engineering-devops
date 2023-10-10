@@ -14,11 +14,3 @@ PATH_TO_SSH_KEY=$4
 
 # Copy the file to the remote server using SCP
 scp -o "StrictHostKeyChecking=no" -i "$PATH_TO_SSH_KEY" "$PATH_TO_FILE" "$USERNAME"@"$IP":~/"
-
-# Check if the file transfer was successful
-if [ $? -eq 0 ];
-then
-    echo "File transfer successful to $USERNAME@$IP"
-else
-    echo "File transfer failed to $USERNAME@$IP"
-fi
