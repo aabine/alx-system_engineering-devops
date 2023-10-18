@@ -18,7 +18,7 @@ dump_file="backup.sql"
 archive_file="$date_formatted.tar.gz"
 
 # MySQL dump command to export all databases
-mysqldump -u $mysql_user -p$mysql_password --all-databases > $dump_file
+sudo mysqldump -u $mysql_user -p$mysql_password --all-databases > $dump_file
 
 # Check if the dump was successful
 if [ $? -eq 0 ]; then
@@ -33,9 +33,7 @@ if [ $? -eq 0 ]; then
     else
         echo "Failed to create the archive."
     fi
-
-    # Remove the dump file
-    rm $dump_file
+    
 else
     echo "MySQL dump failed. Please check your MySQL credentials and database access."
 fi
