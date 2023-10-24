@@ -1,41 +1,46 @@
 #!/usr/bin/python3
-"""Returns to-do list information for a given employee ID."""
+"""Python script to display employee todo progress."""
 import requests
 import sys
 
 
-def get_employee_todo_progress(employee_id):
+def get_employee_todo_progress(user_id):
     """
-    Retrieves and displays the completed tasks of an employee.
+    Retrieves the progress of a given employee's tasks from a remote API.
 
-    Args:
-        employee_id (int): The ID of the employee.
+    Parameters:
+        user_id (int): The ID of the employee whose tasks are to be retrieved.
+
     Raises:
-        ValueError: If the employee ID is not a valid integer.
+        ValueError: If the user_id is not an integer.
+
+    Returns:
+        None
     """
-    if not isinstance(employee_id, int):
+    if not isinstance(user_id, int):
         raise ValueError("Employee ID must be an integer.")
 
-    # Get content from Api response
     url = "https://jsonplaceholder.typicode.com/"
-    get_user = requests.get(url + "users/{}".format(employee_id))
-    get_tasks = requests.get(f"{url}todos", params={"userId": employee_id})
 
-    # Get data from response
-    user_data = get_user.json()
-    tasks_data = get_tasks.json()
+    try:
+        with requests.get(url + "users/{}".format(user_id)) as user:
+            user_data = user.json()
 
-    # Get completed tasks
-    completed_tasks = [task for task in tasks_data if task["completed"]]
+        with requests.get(f"{url}todos", params={"userId": user_id}) as tasks:
+            tasks_data = tasks.json()
 
-    # Print completed tasks
-    print("Employee {} is done with tasks({}/{}):".format(
-        user_data["name"], len(completed_tasks), len(tasks_data)
-    ))
-    for task in completed_tasks:
-        print("\t {}".format(task["title"]))
+        completed_tasks = [task for task in tasks_data if task["completed"]]
+
+        print("Employee {} is done with tasks({}/{}):".format(
+            user_data["name"], len(completed_tasks), len(tasks_data)
+        ))
+        for task in completed_tasks:
+            print("\t {}".format(task["title"]))
+
+    except requests.exceptions.RequestException as e:
+        print("An error occurred:", str(e))
 
 
 if __name__ == "__main__":
-    employee_id = int(sys.argv[1])
-    get_employee_todo_progress(employee_id)
+    user_id = int(sys.argv[1])
+    get_employee_todo_progress(user_id)
