@@ -13,36 +13,29 @@ def get_employee_todo_progress(employee_id):
     Raises:
         ValueError: If the employee ID is not a valid integer.
     """
-    base_url = "https://jsonplaceholder.typicode.com"
-    users_url = f"{base_url}/users"
-    todos_url = f"{base_url}/todos"
+    if not isinstance(employee_id, int):
+        raise ValueError("Employee ID must be an integer.")
 
-    try:
-        user_resp = requests.get(f"{users_url}/{employee_id}")
-        user_resp.raise_for_status()
+    # Retrieve user data
+    user_data = requests.get(
+        f"https://jsonplaceholder.typicode.com/users/{employee_id}").json()
 
-        user = user_resp.json()
+    # Retrieve completed tasks for the employee
+    get_content_from_user = requests.get(
+        "https://jsonplaceholder.typicode.com/todos",
+        params={"userId": employee_id}).json()
 
-        todos_resp = requests.get(f"{todos_url}?userId={employee_id}")
-        todos_resp.raise_for_status()
+    # Filter completed tasks
+    completed_tasks = [task for task in get_content_from_user
+                       if task["completed"]]
 
-        todos = todos_resp.json()
-
-        completed = [todo for todo in todos if todo['completed']]
-        print("Employee {} is done with tasks({}/{}):".format(
-            user['username'], len(completed), len(todos)))
-        for todo in completed:
-            print(f"\t{todo['title']}")
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
+    # Print employee progress
+    print("Employee {} is done with tasks({}/{}):".format(
+        user_data["name"], len(completed_tasks), len(get_content_from_user)))
+    for task in completed_tasks:
+        print(f"\t{task['title']}")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python script.py <employee_id>")
-    else:
-        try:
-            employee_id = int(sys.argv[1])
-            get_employee_todo_progress(employee_id)
-        except ValueError:
-            print("Please enter a valid integer for the employee ID.")
+    employee_id = int(sys.argv[1])
+    get_employee_todo_progress(employee_id)
