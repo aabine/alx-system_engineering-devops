@@ -1,40 +1,33 @@
 #!/usr/bin/python3
-"""Python script to export user's tasks in CSV format."""
+"""Exports to-do list information for a given employee ID to CSV format."""
 import csv
-import json
-import sys
 import requests
+import sys
 
-
-def convert_to_csv(user_id: int):
-    """Converts JSON data to CSV format for a specific user."""
-    base_url = "https://jsonplaceholder.typicode.com"
-    users_url = f"{base_url}/users/{user_id}"
-    todos_url = f"{base_url}/todos?userId={user_id}"
-
-    try:
-        with requests.get(users_url) as user_resp:
-            user_data = json.loads(user_resp.content.decode())
-        with requests.get(todos_url) as todos_resp:
-            todos = json.loads(todos_resp.content.decode())
-
-        with open(f"{user_id}.csv", "w", newline="") as csvfile:
-            writer = csv.writer(csvfile)
-            for todo in todos:
-                writer.writerow([user_id,
-                                 user_data['username'],
-                                 todo['completed'],
-                                 todo['title']])
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
-
+def export_user_tasks_to_csv(user_id):
+    # Base URL for the JSONPlaceholder API
+    base_url = "https://jsonplaceholder.typicode.com/"
+    
+    # Make a request to get the user's data
+    user = requests.get(base_url + "users/{}".format(user_id)).json()
+    username = user.get("username")
+    
+    # Make a request to get the user's to-do list
+    todos = requests.get(base_url + "todos", params={"userId": user_id}).json()
+    
+    # Create and write to the CSV file
+    with open("{}.csv".format(user_id), "w", newline="") as csvfile:
+        writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+        
+        # Use a list comprehension to write each task's information
+        [writer.writerow([user_id, username, t.get("completed"), t.get("title")]) for t in todos]
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python script.py <user_id>")
     else:
         try:
-            user_id = int(sys.argv[1])
-            convert_to_csv(user_id)
+            user_id = sys.argv[1]
+            export_user_tasks_to_csv(user_id)
         except ValueError:
             print("Invalid user ID. Please provide an integer value.")
