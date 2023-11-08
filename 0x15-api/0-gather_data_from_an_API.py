@@ -17,13 +17,13 @@ def get_employee_todo_progress(user_id):
     Returns:
         None
     """
-    if not isinstance(user_id, int):
+    if not isinstance(user_id, int) or user_id is None:
         raise ValueError("Employee ID must be an integer.")
 
     url = "https://jsonplaceholder.typicode.com/"
 
     try:
-        with requests.get(url + "users/{}".format(user_id)) as user:
+        with requests.get(f"{url}users/{user_id}") as user:
             user_data = user.json()
 
         with requests.get(f"{url}todos", params={"userId": user_id}) as tasks:

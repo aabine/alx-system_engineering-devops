@@ -1,40 +1,35 @@
 #!/usr/bin/python3
-"""Python script to export user's tasks in JSON format."""
-
+import aiohttp
+import asyncio
 import json
-import requests
 
-
-def convert_to_json() -> None:
-    """Converts JSON data to JSON format for all users and their tasks."""
+async def fetch_and_convert_to_json():
     user_url = "https://jsonplaceholder.typicode.com/users"
     todos_url = "https://jsonplaceholder.typicode.com/todos"
 
-    try:
-        with requests.get(user_url) as user_resp:
-            users = json.loads(user_resp.content.decode())
-        with requests.get(todos_url) as todos_resp:
-            todos = json.loads(todos_resp.content.decode())
+    async with aiohttp.ClientSession() as session:
+        async with session.get(user_url) as user_resp, session.get(todos_url) as todos_resp:
+            user_data = await user_resp.json()
+            todos_data = await todos_resp.json()
 
-        user_tasks = {}
+    user_tasks = {}  # Create a dictionary to hold the user tasks data
+    for user in user_data:
+        user_id = user["id"]
+        username = user["username"]
+        # Filter todos for the current user and format them as specified
+        user_tasks[user_id] = [
+            {
+                "username": username,
+                "task": todo["title"],
+                "completed": todo["completed"]
+            }
+            for todo in todos_data if todo["userId"] == user_id
+        ]
 
-        for user in users:
-            user_id = user["id"]
-            username = user["username"]
-            user_tasks[user_id] = [
-                {
-                    "username": username,
-                    "task": todo["title"],
-                    "completed": todo["completed"]
-                }
-                for todo in todos if todo["userId"] == user_id
-            ]
-
-        with open("todo_all_employees.json", "w") as json_file:
-            json.dump(user_tasks, json_file)
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
-
+    with open("todo_all_employees.json", "w") as json_file:
+        # Serialize the user_tasks dictionary to JSON
+        json.dump(user_tasks, json_file)
 
 if __name__ == "__main__":
-    convert_to_json()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(fetch_and_convert_to_json())
