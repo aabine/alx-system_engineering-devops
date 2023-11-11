@@ -1,11 +1,6 @@
-file_line { 'replace':
-  path    => '/var/www/html/wp-settings.php',
-  line    => '/phpp/php/',
-  match   => '.*',
-  require => Exec['create_file'],
-}
+# Fix 500 error when a GET HTTP method is requested to Apache web server
 
-exec { 'create_file':
-  command => 'touch /var/www/html/wp-settings.php',
-  creates => '/var/www/html/wp-settings.php',
+exec {'replace':
+  provider => shell,
+  command  => 'sed -i "s/phpp/php/g" /var/www/html/wp-settings.php'
 }
