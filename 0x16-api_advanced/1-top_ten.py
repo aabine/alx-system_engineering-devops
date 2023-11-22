@@ -1,43 +1,30 @@
 #!/usr/bin/python3
 """ print the top ten hot posts of a subreddit """
-import sys
 import requests
-from typing import Optional
 
 
-def top_ten(subreddit: Optional[str]) -> None:
-    """
-    This function queries the Reddit API and
-    returns the titles of the top 10 hot posts
-    of the given subreddit.
+def top_ten(subreddit):
+    """ print the top ten hot posts of a subreddit """
+    if not subreddit:
+        return None
 
-    Args:
-        subreddit: The name of the subreddit to search.
-
-    Returns:
-        None
-    """
-    if subreddit is None or not isinstance(subreddit, str):
-        print(None)
-        return
-
-    url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
-    headers = "Python/{}".format(sys.version.split()[0])
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
+    headers = {"User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"}
+    params = {"limit": 10}
 
     try:
-        with requests.Session() as session:
-            response = session.get(
-                url,
-                headers={'User-Agent': headers},
-                allow_redirects=False
-                )
-            response.raise_for_status()
+        response = requests.get(
+            url,
+            headers=headers,
+            params=params,
+            allow_redirects=False
+            )
 
-            data = response.json()
-            if 'data' in data and 'children' in data['data']:
-                for post in data['data']['children'][:10]:
-                    print(post['data']['title'])
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {str(e)}")
-
-    return None
+        if response.status_code == 200:
+            top = response.json().get("data").get("children")[:10]
+            for post in top:
+                print(post.get("data").get("title"))
+        else:
+            print(None)
+    except requests.exceptions.RequestException:
+        print(None)
