@@ -24,6 +24,6 @@ def recurse(subreddit, hot_list=[], after=None):
         if after is not None:
             time.sleep(1)
             return recurse(subreddit, hot_list, after)
-        return len(hot_list)
+        return hot_list
     else:
         return None
