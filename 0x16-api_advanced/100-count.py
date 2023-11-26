@@ -3,6 +3,7 @@
 import requests
 import re
 
+
 def count_words(subreddit, word_list, after=None, word_count=None):
     if word_count is None:
         word_count = {word.lower(): 0 for word in word_list}

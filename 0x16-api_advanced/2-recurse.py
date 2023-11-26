@@ -3,6 +3,7 @@
 import requests
 import time
 
+
 def recurse(subreddit, hot_list=[], after=None):
     headers = {"User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"}
 
@@ -23,7 +24,6 @@ def recurse(subreddit, hot_list=[], after=None):
         if after is not None:
             time.sleep(1)
             return recurse(subreddit, hot_list, after)
-        
         return len(hot_list)
     else:
         return None
